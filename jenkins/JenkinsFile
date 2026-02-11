@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        DOCKERHUB_USER = 'Helbino'
+        DOCKERHUB_USER = 'helbino' //must be lowercase?
         IMAGE_NAME = 'my-web-app'
         IMAGE_TAG = "v-${BUILD_NUMBER}"
     }
