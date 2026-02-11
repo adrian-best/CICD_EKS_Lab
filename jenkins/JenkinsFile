@@ -42,25 +42,29 @@ pipeline {
                     steps {
                         script {
                             withCredentials([usernamePassword(credentialsId: 'jenkins-lab', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
-                                // 1. Set identity first
+                                // 1. Identity setup
                                 sh "git config user.email 'jenkins@example.com'"
                                 sh "git config user.name 'Jenkins Bot'"
 
-                                // 2. Force a clean checkout and pull the latest
-                                sh "git checkout main"
-                                sh "git pull origin main"
+                                // 2. The Lazy Push Setup: Overwrite the remote URL with the tokenized version
+                                // This allows 'git push origin main' to work without extra arguments
+                                sh "git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/CICD_LAB_EKS.git"
 
-                                // 3. Perform the replacement
+                                // 3. Sync up with GitHub (handles the 'behind origin' error)
+                                sh "git checkout main"
+                                sh "git pull --rebase origin main"
+
+                                // 4. Update the image tag in the YAML
                                 sh "sed -i 's|image: ${DOCKERHUB_USER}/${IMAGE_NAME}:.*|image: ${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}|g' k8s/deployment.yaml"
 
-                                // 4. Commit and Push ONLY if there are changes
-                                // Note: Using 'git diff --exit-code' is a more reliable check
+                                // 5. Commit and Push
+                                // We use a simple if-check to see if the file actually changed
                                 def changed = sh(script: "git diff --exit-code k8s/deployment.yaml", returnStatus: true)
                                 
-                                if (changed != 0) { 
+                                if (changed != 0) {
                                     sh "git add k8s/deployment.yaml"
                                     sh "git commit -m 'Jenkins: update image to ${IMAGE_TAG}'"
-                                    sh "git push https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/CICD_LAB_EKS main"
+                                    sh "git push origin main"
                                     echo "Successfully pushed update to GitHub!"
                                 } else {
                                     echo "No changes detected. Is the image tag already ${IMAGE_TAG}?"
