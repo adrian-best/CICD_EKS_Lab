@@ -60,7 +60,7 @@ pipeline {
                                 if (changed != 0) { 
                                     sh "git add k8s/deployment.yaml"
                                     sh "git commit -m 'Jenkins: update image to ${IMAGE_TAG}'"
-                                    sh "git push https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/CICD_LAB_EKS.git main"
+                                    sh "git push https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/CICD_LAB_EKS main"
                                     echo "Successfully pushed update to GitHub!"
                                 } else {
                                     echo "No changes detected. Is the image tag already ${IMAGE_TAG}?"
