@@ -20,23 +20,23 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    docker.withTool('docker-latest') {
-                        sh "docker build -f my-lab/Dockerfile -t $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG my-lab"
-                    }
+                    // Use the absolute path to the binary we just installed
+                    sh "/usr/bin/docker build -f my-lab/Dockerfile -t $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG my-lab"
                 }
             }
         }
+
         stage('Push Image') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        sh "echo $PASS | docker login -u $USER --pasword-stdin"
-
-                        sh "docker push $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG"
+                        // Use the absolute path here too
+                        sh "echo $PASS | /usr/bin/docker login -u $USER --password-stdin"
+                        sh "/usr/bin/docker push $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG"
+                    }
                 }
             }
         }
-    }
     }
 
 }
