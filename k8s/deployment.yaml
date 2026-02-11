@@ -16,4 +16,4 @@ spec:
       - name: nginx
         image: my-web-app:v1
         ports:
-        - containerPort: 80mink
+        - containerPort: 80
