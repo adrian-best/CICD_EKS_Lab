@@ -42,24 +42,28 @@ pipeline {
                     steps {
                         script {
                             withCredentials([usernamePassword(credentialsId: 'jenkins-lab', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
-                                // 1. Force switch to main branch so we aren't "detached"
-                                sh "git checkout main"
-                                
+                                // 1. Set identity first
                                 sh "git config user.email 'jenkins@example.com'"
                                 sh "git config user.name 'Jenkins Bot'"
 
-                                // 2. Update the image tag (Note the double quotes for Groovy variable expansion)
+                                // 2. Force a clean checkout and pull the latest
+                                sh "git checkout main"
+                                sh "git pull origin main"
+
+                                // 3. Perform the replacement
                                 sh "sed -i 's|image: ${DOCKERHUB_USER}/${IMAGE_NAME}:.*|image: ${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}|g' k8s/deployment.yaml"
 
-                                // 3. Check if anything actually changed
-                                def status = sh(script: "git status --porcelain", returnStatus: true)
+                                // 4. Commit and Push ONLY if there are changes
+                                // Note: Using 'git diff --exit-code' is a more reliable check
+                                def changed = sh(script: "git diff --exit-code k8s/deployment.yaml", returnStatus: true)
                                 
-                                if (status == 0) {
+                                if (changed != 0) { 
                                     sh "git add k8s/deployment.yaml"
                                     sh "git commit -m 'Jenkins: update image to ${IMAGE_TAG}'"
                                     sh "git push https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/CICD_LAB_EKS.git main"
+                                    echo "Successfully pushed update to GitHub!"
                                 } else {
-                                    echo "No changes detected in deployment.yaml. Skipping push."
+                                    echo "No changes detected. Is the image tag already ${IMAGE_TAG}?"
                                 }
                             }
                         }
