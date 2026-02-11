@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: my-web-app
 spec:
   selector:
     matchLabels:
@@ -16,4 +16,4 @@ spec:
       - name: nginx
         image: my-web-app:v1
         ports:
-        - containerPort: 80
+        - containerPort: 80mink
