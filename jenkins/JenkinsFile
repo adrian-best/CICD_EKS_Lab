@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_USER = 'Helbino'
+        IMAGE_NAME = 'my-web-app'
+        IMAGE_TAG = "v-${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build Image') {
+            steps {
+                script {
+                    sh "docker build -t $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG ."
+                }
+            }
+        }
+    }
+
+}
