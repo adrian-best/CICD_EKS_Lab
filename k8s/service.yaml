@@ -4,7 +4,7 @@ metadata:
   name: my-web-app-service
 spec:
   selector:
-    app: my-web-app  # This MUST match the label in your Deployment
+    app: nginx  # This MUST match the label in your Deployment
   ports:
     - protocol: TCP
       port: 80       # The port the Service listens on
