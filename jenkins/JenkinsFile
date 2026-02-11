@@ -30,9 +30,10 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        // Use the absolute path here too
-                        sh "echo $PASS | /usr/bin/docker login -u $USER --password-stdin"
-                        sh "/usr/bin/docker push $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG"
+                        // Use single quotes and the '--password' flag for better reliability
+                        sh "/usr/bin/docker login -u '${USER}' -p '${PASS}'"
+                        
+                        sh "/usr/bin/docker push ${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
                     }
                 }
             }
