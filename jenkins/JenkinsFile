@@ -51,6 +51,7 @@ pipeline {
                                 sh "git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/${GIT_USER}/CICD_LAB_EKS.git"
 
                                 // 3. Sync up with GitHub (handles the 'behind origin' error)
+                                sh "git config pull.rebase true"
                                 sh "git checkout main"
                                 sh "git pull --rebase origin main"
 
