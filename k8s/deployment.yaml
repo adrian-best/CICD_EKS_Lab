@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: helbino/my-web-app:v-20
+        image: helbino/my-web-app:v-24
         ports:
         - containerPort: 80
