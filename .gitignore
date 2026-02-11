@@ -1,0 +1,16 @@
+# --- Terraform ---
+# Ignore the hidden folder where Terraform downloads plugins
+.terraform/
+.terraform.lock.hcl
+
+# Ignore the sensitive state files (Contains passwords/IPs)
+*.tfstate
+*.tfstate.backup
+
+# Ignore variable files (often contain secrets)
+*.tfvars
+
+# --- EXTREME OPTION ---
+# Uncomment the line below if you do NOT want your .tf code 
+# (main.tf) in the repo at all. 
+*.tf
