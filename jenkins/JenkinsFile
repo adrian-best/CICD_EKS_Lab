@@ -20,7 +20,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    sh "docker build -f mylab/Dockerfile -t $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG my-lab"
+                    sh "docker build -f my-lab/Dockerfile -t $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG my-lab"
                 }
             }
         }
